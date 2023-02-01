@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habitracker/%20components/month_summary.dart';
 import 'package:habitracker/%20components/my_fab.dart';
 import 'package:habitracker/data/habit_database.dart';
 import 'package:hive/hive.dart';
@@ -58,6 +59,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       db.todayHabitList[index][1] = value;
     });
+    db.updateDatabase();
   }
 
   // TODO Create a New Habit
@@ -84,6 +86,7 @@ class _HomePageState extends State<HomePage> {
     // clear Text Form Field
     newHabitController.clear();
     Navigator.of(context).pop();
+    db.updateDatabase();
   }
 
   // TODO CancelNewHabit
@@ -113,6 +116,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       db.todayHabitList.removeAt(index);
     });
+    db.updateDatabase();
   }
 
   // TODO Save Change Habit
@@ -122,6 +126,7 @@ class _HomePageState extends State<HomePage> {
     });
     newHabitController.clear();
     Navigator.of(context).pop();
+    db.updateDatabase();
   }
 
   @override
@@ -138,17 +143,28 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: MyFloatingActionButton(
           onChanged: createNewHabit,
         ),
-        body: ListView.builder(
-          itemCount: db.todayHabitList.length,
-          itemBuilder: (context, index) {
-            return HabitTile(
-              habitName: db.todayHabitList[index][0],
-              habitCompleted: db.todayHabitList[index][1],
-              onChanged: (value) => checkBoxTapped(value, index),
-              settingTapped: (context) => changeHabit(index),
-              deleteTapped: (context) => deleteHabit(index),
-            );
-          },
-        ));
+        body: ListView(
+          children: [
+            // Monthly Summary Heat Map
+            MonthlySummary(datasets: db.heatMapDataSet, startDate: _myBox.get("START_DATE")),
+
+            // List of Habit
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: db.todayHabitList.length,
+              itemBuilder: (context, index) {
+                return HabitTile(
+                  habitName: db.todayHabitList[index][0],
+                  habitCompleted: db.todayHabitList[index][1],
+                  onChanged: (value) => checkBoxTapped(value, index),
+                  settingTapped: (context) => changeHabit(index),
+                  deleteTapped: (context) => deleteHabit(index),
+                );
+              },
+            )
+          ],
+        )
+    );
   }
 }
