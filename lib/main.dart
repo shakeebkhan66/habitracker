@@ -4,11 +4,11 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 
 void main() async{
-  // // Initialize Hive
-  // await Hive.initFlutter();
-  //
-  // // Open a Box
-  // await Hive.openBox("Habit_Database");
+  // Initialize Hive
+  await Hive.initFlutter();
+
+  // Open a Box
+  await Hive.openBox("Habit_Database");
   runApp(const MyApp());
 }
 
